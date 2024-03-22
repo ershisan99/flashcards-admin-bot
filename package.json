@@ -1,0 +1,52 @@
+{
+  "name": "node-typescript-boilerplate",
+  "version": "0.0.0",
+  "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
+  "type": "module",
+  "engines": {
+    "node": ">= 20.9 < 21"
+  },
+  "devDependencies": {
+    "@telegraf/types": "^6.9.1",
+    "@types/jest": "~29.5",
+    "@types/node": "~20",
+    "@typescript-eslint/eslint-plugin": "~6.15",
+    "@typescript-eslint/parser": "~6.15",
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.3.1",
+    "eslint": "~8.56",
+    "eslint-config-prettier": "~9.1",
+    "eslint-plugin-jest": "~27.6",
+    "jest": "~29.7",
+    "nodemon": "^3.0.2",
+    "prettier": "~3.1",
+    "rimraf": "~5.0",
+    "ts-api-utils": "~1.0",
+    "ts-jest": "~29.1",
+    "typescript": "~5.3"
+  },
+  "scripts": {
+    "start": "node build/src/main.js",
+    "gen": "node build/src/generate-groups.js",
+    "open-html": "npx -y serve",
+    "reset": "node scripts/reset-data.cjs",
+    "send-group-info": "pnpm build && node build/src/send-group-info.js",
+    "start:watch": "nodemon build/src/main.js --ignore groups.json --ignore data.json",
+    "dev": "concurrently \"npm run start:watch\" \"npm run build:watch\"",
+    "clean": "rimraf coverage build tmp",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -w -p tsconfig.json",
+    "build:release": "npm run clean && tsc -p tsconfig.release.json",
+    "lint": "eslint . --ext .ts --ext .mts",
+    "test": "jest --coverage",
+    "prettier": "prettier --config .prettierrc --write .",
+    "test:watch": "jest --watch"
+  },
+  "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "remeda": "^1.33.0",
+    "telegraf": "^4.15.3",
+    "tslib": "~2.6"
+  }
+}
