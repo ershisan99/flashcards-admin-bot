@@ -26,7 +26,6 @@
     "typescript": "~5.3"
   },
   "scripts": {
-    "start": "node build/src/main.js",
     "gen": "node build/src/generate-groups.js",
     "open-html": "npx -y serve",
     "reset": "node scripts/reset-data.cjs",
@@ -45,6 +44,7 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "fastify": "^4.27.0",
     "remeda": "^1.33.0",
     "telegraf": "^4.15.3",
     "tslib": "~2.6"
