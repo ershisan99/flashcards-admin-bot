@@ -1,6 +1,6 @@
 import { Stage, WizardScene } from 'telegraf/scenes';
-import { Data, UserData } from '../types.js';
-import fs from 'fs';
+import { UserData } from '../types.js';
+import * as db from '../db.js';
 
 const superWizard = new WizardScene<any>(
   'add_to_team_wizard',
@@ -135,9 +135,10 @@ const superWizard = new WizardScene<any>(
         ...data,
         tgUsername: ctx.from?.username,
         chatId,
+        userId: userId?.toString() ?? '',
       };
 
-      updateData({ userId: userId?.toString() ?? '', ...dataWithTgUsername });
+      await updateData(dataWithTgUsername);
       await ctx.reply(
         `Спасибо за регистрацию! Мы свяжемся с тобой в ближайшее время.`,
       );
@@ -152,10 +153,8 @@ const superWizard = new WizardScene<any>(
 
 export const stage = new Stage([superWizard]);
 
-function updateData({ ...rest }: UserData) {
-  const data = fs.readFileSync('./data.json', 'utf8');
-  const dataObj = JSON.parse(data) as Data;
-  dataObj[rest.userId] = rest;
-  const newDataStr = JSON.stringify(dataObj);
-  fs.writeFileSync('./data.json', newDataStr, 'utf8');
+async function updateData({ ...rest }: UserData) {
+  const data = await db.readData();
+  data.rawData[rest.userId] = rest;
+  await db.writeData(data);
 }

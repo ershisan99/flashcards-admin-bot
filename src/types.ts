@@ -6,4 +6,7 @@ export type UserData = {
   chatId: string;
 };
 
-export type Data = Record<string, UserData>;
+export type Data = {
+  rawData: Record<string, UserData>;
+  groups: UserData[][];
+};

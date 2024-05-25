@@ -6,7 +6,7 @@ generateGroups();
 function generateGroups() {
   const data = fs.readFileSync('./data.json', 'utf8');
   const dataObj = JSON.parse(data) as Data;
-  const groupedUsers = groupByTime(dataObj);
+  const groupedUsers = groupByTime(dataObj.rawData);
   fs.writeFileSync('./groups.json', JSON.stringify(groupedUsers), 'utf8');
   generateJsFile(groupedUsers);
 }
@@ -18,6 +18,7 @@ function generateJsFile(users: UserData[][]) {
 
   fs.writeFileSync('./index.js', jsFile, 'utf8');
 }
+
 function groupByTime(users: Record<string, UserData>): UserData[][] {
   const allUsers = Object.values(users);
 

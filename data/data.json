@@ -1,1 +1,48 @@
-{}
+{
+  "rawData": {
+    "424297319": {
+      "name": "Зимин Владислав",
+      "availableTime": {
+        "from": 30,
+        "to": 40
+      },
+      "tgUsername": "swq_2018",
+      "chatId": 424297319,
+      "userId": "424297319"
+    },
+    "558491754": {
+      "name": "Andrei Zadorozhnyi",
+      "availableTime": {
+        "from": 30,
+        "to": 40
+      },
+      "tgUsername": "andrei_zadorozhnyi",
+      "chatId": 558491754,
+      "userId": "558491754"
+    }
+  },
+  "groups": [
+    [
+      {
+        "name": "Зимин Владислав",
+        "availableTime": {
+          "from": 30,
+          "to": 40
+        },
+        "tgUsername": "swq_2018",
+        "chatId": 424297319,
+        "userId": "424297319"
+      },
+      {
+        "name": "Andrei Zadorozhnyi",
+        "availableTime": {
+          "from": 30,
+          "to": 40
+        },
+        "tgUsername": "andrei_zadorozhnyi",
+        "chatId": 558491754,
+        "userId": "558491754"
+      }
+    ]
+  ]
+}
