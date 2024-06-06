@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@telegraf/types": "^6.9.1",
+    "@types/better-sqlite3": "^7.6.10",
     "@types/jest": "~29.5",
     "@types/node": "~20",
     "@typescript-eslint/eslint-plugin": "~6.15",
@@ -44,8 +45,10 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "better-sqlite3": "^10.0.0",
     "fastify": "^4.27.0",
     "remeda": "^1.33.0",
+    "sqlite3": "^5.1.7",
     "telegraf": "^4.15.3",
     "tslib": "~2.6"
   }

@@ -153,8 +153,11 @@ const superWizard = new WizardScene<any>(
 
 export const stage = new Stage([superWizard]);
 
-async function updateData({ ...rest }: UserData) {
-  const data = await db.readData();
-  data.rawData[rest.userId] = rest;
-  await db.writeData(data);
+async function updateData({ availableTime, ...user }: UserData) {
+  await db.addUser({
+    ...user,
+    availableFrom: availableTime.from,
+    availableTo: availableTime.to,
+    chatId: user.chatId.toString(),
+  });
 }

@@ -1,17 +1,17 @@
-import { UserData } from '../types.js';
 import { FmtString } from 'telegraf/format';
+import { Group } from '../db.js';
 
 export function sendGroupInfo(
-  data: UserData[][],
+  groups: Group[],
   sendMessage: (
     chatId: number | string,
     text: string | FmtString,
     extra?: any,
   ) => void,
 ) {
-  data.forEach((group) => {
-    group.forEach((user, i, arr) => {
-      const otherUsers = group.filter((u) => u.userId !== user.userId);
+  groups.forEach((group) => {
+    group.users.forEach((user, i, arr) => {
+      const otherUsers = group.users.filter((u) => u.chatId !== user.chatId);
       if (otherUsers.length === 0) {
         sendMessage(user.chatId, 'К сожалению, в твою группу не попал никто.');
         return;
@@ -19,12 +19,9 @@ export function sendGroupInfo(
       let message = `Привет, ${user.name}! Твои напарники:\n\n${otherUsers
         .map(
           (u) =>
-            `- <a href="tg://user?id=${u.userId}">${u.name}</a> @${
+            `- <a href="tg://user?id=${u.chatId}">${u.name}</a> @${
               u.tgUsername
-            }. Время: ${getAvailableTime(
-              u.availableTime.from,
-              u.availableTime.to,
-            )}`,
+            }. Время: ${getAvailableTime(u.availableFrom, u.availableTo)}`,
         )
         .join(' \n')}`;
 

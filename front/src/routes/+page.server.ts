@@ -13,6 +13,10 @@ export const actions = {
 
 	fillPreregistered: async () => {
 		await fetch('http://localhost:3000/fill-preregistered');
+	},
+
+	sendGroupInfo: async () => {
+		await fetch('http://localhost:3000/send-group-info');
 	}
 };
 
@@ -25,6 +29,21 @@ export type UserData = {
 };
 
 export type Data = {
-	rawData: Record<string, UserData>;
-	groups: UserData[][];
+	users: User[];
+	groups: Group[];
+};
+
+export type User = {
+	availableFrom: number;
+	availableTo: number;
+	chatId: string;
+	groupId?: any;
+	id: number;
+	name: string;
+	tgUsername: string;
+};
+
+export type Group = {
+	id: number;
+	users: User[];
 };

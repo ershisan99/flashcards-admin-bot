@@ -1,15 +1,19 @@
-import { UserData } from '../types.js';
+import { User } from '../db.js';
 
-export function groupByTime(users: Record<string, UserData>): UserData[][] {
-  const allUsers = Object.values(users);
-
+export function groupByTime(users: User[]): User[][] {
   // First, sort all users by their available time from low to high
-  allUsers.sort((a, b) => a.availableTime.from - b.availableTime.from);
+  users.sort((a, b) => a.availableFrom - b.availableFrom);
 
-  const groups: UserData[][] = [];
-  let currentGroup: UserData[] = [];
+  const groups: User[][] = [];
+  let currentGroup: User[] = [];
 
-  allUsers.forEach((user) => {
+  if (users.length % 3 === 1) {
+    const lastGroup = [users.at(-1), users.at(-2)];
+    groups.push(lastGroup);
+    users = users.slice(0, -2);
+  }
+
+  users.forEach((user) => {
     currentGroup.push(user);
 
     // If the current group reaches 3 members, start a new group

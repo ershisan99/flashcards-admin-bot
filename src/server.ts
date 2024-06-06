@@ -9,6 +9,7 @@ import { session, Telegraf } from 'telegraf';
 import { stage } from './bot/setup-wizard-stage.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { sendGroupInfo } from './bot/send-group-info.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.join(__dirname, '../..');
@@ -37,12 +38,14 @@ const fastify = Fastify({
 });
 
 fastify.get('/', async function handler(request, reply) {
-  return await db.readData();
+  const users = await db.getUsers();
+  const groups = await db.getGroups();
+  return reply.code(200).send({ users, groups });
 });
 
 fastify.get('/prepare-db', async function handler(request, reply) {
   try {
-    await db.writeData(db.initialData);
+    await db.clearDatabase();
     return reply.code(200).send();
   } catch (err) {
     console.error(err);
@@ -52,9 +55,12 @@ fastify.get('/prepare-db', async function handler(request, reply) {
 
 fastify.get('/generate-groups', async function handler(request, reply) {
   try {
-    const data = await db.readData();
-    data.groups = groupByTime(data.rawData);
-    await db.writeData(data);
+    const users = await db.getUsers();
+    const groups = groupByTime(users);
+
+    for (const group of groups) {
+      await db.addGroup(group.map((user) => user.id));
+    }
     return reply.code(200).send();
   } catch (err) {
     console.error(err);
@@ -68,8 +74,22 @@ fastify.get('/fill-preregistered', async function handler(request, reply) {
       preregisteredFilePath,
       'utf-8',
     );
-    const parsedPreregisteredData = JSON.parse(preregisteredData);
-    await db.writeData(parsedPreregisteredData);
+    const parsedPreregisteredData = JSON.parse(
+      preregisteredData,
+    ) as Preregistered;
+    for (const user of Object.values(parsedPreregisteredData.rawData)) {
+      try {
+        await db.addUser({
+          chatId: user.chatId.toString(),
+          name: user.name,
+          availableFrom: user.availableTime.from,
+          availableTo: user.availableTime.to,
+          tgUsername: user.tgUsername,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     return reply.code(200).send();
   } catch (err) {
     console.error(err);
@@ -77,6 +97,27 @@ fastify.get('/fill-preregistered', async function handler(request, reply) {
   }
 });
 
+fastify.get('/send-group-info', async function handler(request, reply) {
+  try {
+    const groups = await db.getGroups();
+    sendGroupInfo(groups, (...rest) => bot.telegram.sendMessage(...rest));
+    return reply.code(200).send();
+  } catch (err) {
+    console.error(err);
+    return reply.code(500).send(err);
+  }
+});
+
+fastify.get('/fix', async (req, reply) => {
+  try {
+    await db.modifyUser(4, 14);
+
+    return reply.code(200).send();
+  } catch (err) {
+    console.error(err);
+    return reply.code(500).send(err);
+  }
+});
 void bot.launch();
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
@@ -89,3 +130,23 @@ try {
   fastify.log.error(err);
   process.exit(1);
 }
+
+export type AvailableTime = {
+  from: number;
+  to: number;
+};
+
+export type PUser = {
+  name: string;
+  availableTime: AvailableTime;
+  tgUsername: string;
+  chatId: number;
+  userId: string;
+};
+
+export type RawData = Record<string, PUser>;
+
+export type Preregistered = {
+  rawData: RawData;
+  groups: any[];
+};
